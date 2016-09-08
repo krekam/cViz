@@ -217,13 +217,20 @@ module.exports = {
 		]
 	},
 
-		"angular-pdf":{
+	"angular-pdf":{
 		"cdn":[],
 		"dev":[
 		"/public/libs/pdfjs-dist/build/pdf.combined.js",
 		"/public/assets/js/angular-pdf-viewer.min.js"
 		],
 	},
+
+	"angular-csv":{
+		"cdn":[],
+		"dev":[
+		"/public/libs/ng-csv/build/ng-csv.js"
+		]
+	}
 
 }
 
