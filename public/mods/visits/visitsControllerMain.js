@@ -167,6 +167,21 @@ visitsApp.controller('visitsControllerMain', ['$scope','appUserService', '$http'
   $scope.myData = [];
   $scope.valueComment = "opt1";
 
+
+  // $scope.filename = "test";
+
+  
+  $scope.getArray = function(visitID)
+  {
+  $http.get('/api/v1/secure/visits/'+visitID+'/getallsessions',{
+    cache: true
+  }).success(function(response) {
+    console.log(response);
+  })
+  }
+  // $scope.getArray = [{a: 1, b:2}, {a:3, b:4}];
+  // $scope.getHeader = function () {return ["A", "B"]};
+
   $scope.nextTab = function(data) {
     $location.path('/visits/'+data+'/edit');
     $route.reload();

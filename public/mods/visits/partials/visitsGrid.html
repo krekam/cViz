@@ -101,6 +101,11 @@
             <a class="table-btn" href="#/visits/{{visit._id}}/vman" tooltips tooltip-template="View Visit" ng-if="visitGrid && (( visit.status == 'cancelled' || visit.status == 'close'))"><span class="fa fa-eye fa-lg"/></a>
 
             <a class="table-btn" href="#/visits/{{visit._id}}/closeSummary" tooltips tooltip-template="Close Summary" ng-if=" visit.status == 'close'"><span class="fa fa-file-text-o fa-lg"/></a>
+
+            <!-- <a class="table-btn" ng-csv="getArray(visit._id)" csv-header="getHeader()" filename="{{ filename }}.csv"><span class="fa fa-file-text-o fa-lg"/></a> -->
+            <a class="table-btn" ng-click="getArray(visit._id)"><span class="fa fa-file-text-o fa-lg"/></a>
+<!--             <button class="btn btn-default"
+            >ExportCSV</button> -->
           </td>
         </tr>
 
