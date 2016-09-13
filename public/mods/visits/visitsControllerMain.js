@@ -167,21 +167,6 @@ visitsApp.controller('visitsControllerMain', ['$scope','appUserService', '$http'
   $scope.myData = [];
   $scope.valueComment = "opt1";
 
-
-  // $scope.filename = "test";
-
-  
-  $scope.getArray = function(visitID)
-  {
-  $http.get('/api/v1/secure/visits/'+visitID+'/getallsessions',{
-    cache: true
-  }).success(function(response) {
-    console.log(response);
-  })
-  }
-  // $scope.getArray = [{a: 1, b:2}, {a:3, b:4}];
-  // $scope.getHeader = function () {return ["A", "B"]};
-
   $scope.nextTab = function(data) {
     $location.path('/visits/'+data+'/edit');
     $route.reload();
@@ -480,7 +465,7 @@ var refresh = function() {
         console.log(response);
         $scope.visitManagerAnchor = response.anchor;
         $scope.visitManagerSecondary = response.secondaryVmanager;
-        
+        $scope.visitFlagNumber = response.visitFlagNumber;
         for(var files=0;files<response.visitAttachment.length;files++)
         {
           $scope.array.push(response.visitAttachment[files])
@@ -1178,9 +1163,6 @@ break;
           }else{
             $http.post('/api/v1/secure/visits', inData).success(function(response) {
               // console.log("im in else saveDraf mode!!")
-              $http.get('/api/v1/secure/email/'+ response._id+'/newvisit').success(function(response) {
-               // console.log(response);
-             })
               $scope.nextTab(response._id);
               growl.info(parse("Visit information saved successfully."));
             })
@@ -1205,7 +1187,20 @@ break;
     // console.log($scope.commentsData);
     // console.log($scope.visits);
     // console.log($scope.visits.clientIdData)
+
+    console.log($scope.visitorsTab);
+    console.log($scope.visitFlagNumber);
+
     var inData       = $scope.visits;
+    console.log(inData.visitors);
+    if($scope.visitorsTab == true && $scope.visitFlagNumber == 0 && inData.visitors.length!=0)
+    {
+      console.log(" i am inside email");
+      $http.get('/api/v1/secure/email/'+ inData._id+'/newvisit').success(function(response) {
+        console.log(response);
+      })
+      inData.visitFlagNumber = 1;
+    }
     inData.keynote = $scope.keynotes;
     inData.createBy=$scope.createBy;
     inData.cscPersonnel =$scope.cscPersonnel;
@@ -1316,7 +1311,7 @@ break;
       .error(function(data, status){
         growl.error("Error updating client");
     }); // http put keynoges ends
-
+      console.log(inData);
       $http.put('/api/v1/secure/visits/' + $scope.visits._id,  inData).success(function(response) {
        refresh();
        growl.info(parse("visit [%s]<br/>Edited successfully",  client.name));
@@ -3819,6 +3814,122 @@ $scope.clickUp= function(num,arraydata,index,collectlist){
             }
           }
 
+$scope.rescheduleMail = function()
+{
+  var schedulesLength = $scope.schedules.length;
+  console.log($scope.schedules);
+  console.log($scope.schedules[0].startDate);
+  console.log($scope.schedules[schedulesLength - 1].endDate);
+  $http.get('/api/v1/secure/email/'+ $scope.visits._id + '/' + $scope.schedules[0].startDate + '/' + $scope.schedules[schedulesLength - 1].endDate + '/reschedulemail').success(function(response) {
+    console.log(response);
+  }) 
+}
+
+$scope.getArray = function(visitID)
+  {
+  $scope.arrayCsv = [];
+  $http.get('/api/v1/secure/visits/'+visitID+'/getallsessions',{
+    cache: true
+  }).success(function(response) {
+    console.log(response);
+    for(var i=0;i<response.length;i++)
+    {
+      for(var j=0;j<response[i].comments.length;j++)
+      { 
+        $scope.arrayCsv.push(
+          {
+              "Visit Name":response[i].client.name +" " + "Visit",
+              "Date":moment(response[i].scheduleDate).format('MMMM Do YYYY'),
+              "Location":response[i].session.location,
+              "Session Name":response[i].session.title,
+              "Start Time":moment(response[i].session.startTime).format('MMMM Do YYYY, h:mm:ss a'),
+              "End Time":moment(response[i].session.endTime).format('MMMM Do YYYY, h:mm:ss a'),
+              "Recorded By - Name":response[i].comments[j].givenBy.name.first + " " + response[i].comments[j].givenBy.name.last,
+              "Recorded By - Email":response[i].comments[j].givenBy.email,
+              "Notes":response[i].comments[j].comment
+          });
+      }
+    }
+      // console.log($scope.arrayCsv);
+      // console.log($scope.arrayCsv[0].client.name)
+      var csvTitle = response[0].client.name + " Visit Session Notes";
+      // return $scope.arrayCsv;
+      JSONToCSVConvertor($scope.arrayCsv, "Report", true, csvTitle);
+  })
+  }
+
+  function JSONToCSVConvertor(JSONData, ReportTitle, ShowLabel, csvTitle) {
+    //If JSONData is not an object then JSON.parse will parse the JSON string in an Object
+    var arrData = typeof JSONData != 'object' ? JSON.parse(JSONData) : JSONData;
+    
+    var CSV = '';    
+    //Set Report title in first row or line
+    
+    CSV += ReportTitle + '\r\n\n';
+
+    //This condition will generate the Label/Header
+    if (ShowLabel) {
+        var row = "";
+        
+        //This loop will extract the label from 1st index of on array
+        for (var index in arrData[0]) {
+            
+            //Now convert each value to string and comma-seprated
+            row += index + ',';
+        }
+
+        row = row.slice(0, -1);
+        
+        //append Label row with line break
+        CSV += row + '\r\n';
+    }
+    
+    //1st loop is to extract each row
+    for (var i = 0; i < arrData.length; i++) {
+        var row = "";
+        
+        //2nd loop will extract each column and convert it in string comma-seprated
+        for (var index in arrData[i]) {
+            row += '"' + arrData[i][index] + '",';
+        }
+
+        row.slice(0, row.length - 1);
+        
+        //add a line break after each row
+        CSV += row + '\r\n';
+    }
+
+    if (CSV == '') {        
+        alert("Invalid data");
+        return;
+    }   
+    
+    //Generate a file name
+    var fileName = csvTitle;
+    //this will remove the blank-spaces from the title and replace it with an underscore
+    fileName += ReportTitle.replace(/ /g,"_");   
+    
+    //Initialize file format you want csv or xls
+    var uri = 'data:text/csv;charset=utf-8,' + escape(CSV);
+    
+    // Now the little tricky part.
+    // you can use either>> window.open(uri);
+    // but this will not work in some browsers
+    // or you will not get the correct file extension    
+    
+    //this trick will generate a temp <a /> tag
+    var link = document.createElement("a");    
+    link.href = uri;
+    
+    //set the visibility hidden so it will not effect on your web-layout
+    link.style = "visibility:hidden";
+    link.download = fileName + ".csv";
+    
+    //this part will append the anchor tag and remove it after automatic click
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 }])
 
 //Autocompleate - Directive

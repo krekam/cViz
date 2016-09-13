@@ -82,8 +82,8 @@ var visitSchema = new mongoose.Schema({
 	}],
 	rejectReason 					: { type: String, trim: true },
 	cancelReason					: { type: String, trim: true },
-	preview                         : { type: String, trim: true, enum: ['good', 'poor']}
-
+	preview                         : { type: String, trim: true, enum: ['good', 'poor']},
+	visitFlagNumber					: { type:Number , default:0}
 });
 
 visitSchema.post('init', function(doc) {

@@ -15,6 +15,7 @@ var clientModel           = require(constants.paths.models +  '/client');
 var userModel           = require(constants.paths.models +  '/user');
 var executivesModel		= require(constants.paths.models + '/executives');
 var regionsModel		= require(constants.paths.models + '/regions');
+var commentsModel 		= require(constants.paths.models + '/comments');
 
 // Service method definition -- Begin
 var service = {};
@@ -1377,6 +1378,7 @@ function getAllSessionsById(id){
 		else{
 			scheduleModel
 			.find({ visit: id })
+			.populate('client')
 			.populate('comments')
 			.sort('session.startTime')
 			.exec(function (err, sessions){
@@ -1385,11 +1387,19 @@ function getAllSessionsById(id){
 					deferred.reject(err);
 				}
 				else{
-					transform(visit, sessions);
-					deferred.resolve(sessionLastDays);
+					scheduleModel.populate(sessions, {
+						path: 'comments.givenBy',
+						model: userModel
+					},
+					function(err, sessionComp) {
+						if(err) return callback(err);
+     					 console.log(sessionComp); // This object should now be populated accordingly.
+     					 transform(visit, sessionComp);
+     					 deferred.resolve(sessionLastDays);
+  					});
 				}
-						}); // end of scheduleModel find
-					} // end of if else
+			}); // end of scheduleModel find
+		} // end of if else
     }); // end of model find
 
 		// Internal method to transform visit data to session
