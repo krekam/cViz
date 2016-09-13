@@ -107,9 +107,13 @@ visitsApp.controller('sessionsControllerMain', ['$scope', '$http', '$routeParams
 
 	$scope.getClass = function (strValue) {
 		if (strValue == ("cancelled")){
-			console.log("hello");
-			return "tdb";
-	}
+         return "tdb";
+	       }
+		}
+			$scope.getHide = function (strValue) {
+		if (strValue == ("cancelled")){
+	          return "canses";
+	       }
 		}
 
 	
