@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('visits', ['ngRoute','ui.calendar','angular-growl','textAngular','ngMaterial','ngMessages','ngImgCrop','ngFileUpload', 'multipleSelect', 'angular.filter'])
+angular.module('visits', ['ngRoute','ui.calendar','angular-growl','textAngular','ngMaterial','ngMessages','ngImgCrop','ngFileUpload', 'multipleSelect', 'angular.filter','ngCsv'])
 
 .run(function ($rootScope, $location, $http) {
 	$http.get('/token')

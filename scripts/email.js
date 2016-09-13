@@ -40,6 +40,7 @@ email.visitClosure 						= visitClosure;
 email.getAgenda 						= getAgenda;
 email.calendarInvites					= calendarInvites;
 email.cancelledCalendarInvites 			= cancelledCalendarInvites;
+email.reScheduleEmail					= reScheduleEmail;
 
 module.exports = email;
 
@@ -1518,6 +1519,101 @@ function cancelledCalendarInvites(scheduleId) {
 	});
 }
 
+//Send Reschedule Mail when clicking on reschedule
+function reScheduleEmail(visitId,startDate,endDate) {
+	console.log(visitId,startDate,endDate);
+	if(config.get('email.send-mails')!="true") return;
+
+	var templateDir = path.join(constants.paths.templates, 'email', 'reScheduleVisit');
+	var mailTemplate = new emailTemplate(templateDir);
+	modelVisit
+	.findOne({ _id: visitId })
+	.populate('client')
+	.populate('createBy')
+	.populate('anchor')
+	.exec(function (err, visit) {
+		if(err) {
+			console.log(err);
+		}
+		else{
+			sendMail(visit)
+		}
+	})
+
+	function sendMail(visit)
+	{
+		console.log("THIS IS VISIT");
+		console.log(visit);
+		var toemailIds = [];
+		var ccemailIds = [];
+		visitService.getParticipantsForOverAllFeedback(visitId)
+		.then(function(participants){
+
+			participants["employees"].forEach(function(e){
+				toemailIds.push(e.email);
+			});
+
+			participants["clients"].forEach(function(c){
+				toemailIds.push(c.email);
+			});
+		    
+
+		groupService.getUsersByGroup("admin")
+		.then(function(users){
+			users.forEach(function(user){
+				ccemailIds.push(user.email);
+			});
+			
+
+		toemailIds.push(visit.createBy.email);
+		console.log(toemailIds);
+
+		if(visit.anchor!=null)
+		{
+		ccemailIds.push(visit.anchor.email);
+		}
+		console.log("TO EMAIL IDS");
+		console.log(toemailIds);
+		console.log("CC EMAIL IDS");
+		console.log(ccemailIds);
+		var visitData =	{
+			client: visit.client,
+			visitId:visit.id,
+			createBy:visit.createBy,
+			startDate:startDate,
+			endDate:endDate
+		};
+		mailTemplate.render(visitData, function (err, results) {
+
+			if(err){
+				return console.log(err);
+			}
+
+			var mailOptions = {
+				from: config.get('email.from'),
+					to: toemailIds, // list of receivers
+					cc: ccemailIds,
+					subject: 'Visit Rescheduled by Admin/VM', // Subject line
+					text: results.text, // plaintext body
+					html: results.html // html body
+				};
+
+				console.log(mailOptions);
+				// send mail with defined transport object
+				transporter.sendMail(mailOptions, function(error, info){
+					if(error){
+						return console.log(error);
+					}
+					console.log("Send Mail:: inviteAttendees  -- Status: "+ info.response);
+					console.log('Notifications sent to ' + toemailIds);
+					console.log('Notifications sent to ' + ccemailIds);
+			}); // end of transporter.sendMail
+		}); // end of register mail render
+		});	//end of getGroupAdmin
+		}); // end of visitService.getParticipantsForOverAllFeedback
+
+	}
+} // end of sendRescheduleMail
 function diff(arr1, arr2) {
 	var filteredArr1 = arr1.filter(function(ele) {
 		return arr2.indexOf(ele) == -1;

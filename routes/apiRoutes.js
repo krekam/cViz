@@ -169,6 +169,7 @@ router.delete('/api/v1/secure/feedbacks/:id', feedbacks.deleteById);
 
 router.get('/api/v1/secure/email/:id/:action', emails.sendMails);
 router.get('/api/v1/secure/email/:id/:oldvmanEmail/:action', emails.ownerChange);
+router.get('/api/v1/secure/email/:id/:startDate/:endDate/:action', emails.reScheduleVisit);
 
 // List of service routes for meetingPlaces
 router.get('/api/v1/secure/meetingPlaces', meetingPlaces.getAll);

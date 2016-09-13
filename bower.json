@@ -50,7 +50,8 @@
     "fullcalendar": "2.9.1",
     "angular-wizard": "~0.6.1",
     "angular-filter": "^0.5.8",
-     "pdfjs-dist": "~1.0.925"
+    "pdfjs-dist": "~1.0.925",
+    "ng-csv":"0.3.6"
   },
   "resolutions": {
     "angular": "~1.5.0",

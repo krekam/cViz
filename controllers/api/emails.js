@@ -8,6 +8,7 @@ var controller = {}
 
 controller.sendMails     = sendMails;
 controller.ownerChange     = ownerChange;
+controller.reScheduleVisit = reScheduleVisit;
 
 module.exports = controller;
 
@@ -85,6 +86,21 @@ function ownerChange(req, res){
 	{
 		case "visitownerchange":
 		emailService.notifyVisitOwnerChange(req.params.id,req.params.oldvmanEmail);
+		break;
+
+		default:
+		res.status(404).send("Action could not be identified");
+	}
+
+	res.status(200).send("email notification initiated");
+}
+
+function reScheduleVisit(req, res){
+
+	switch(req.params.action.toLowerCase())
+	{
+		case "reschedulemail":
+		emailService.reScheduleEmail(req.params.id,req.params.startDate,req.params.endDate);
 		break;
 
 		default:

@@ -14,7 +14,6 @@
     </div>
     <table  ng-hide="isSaving && VisitVmag" class="table table-striped table-condensed table-responsive table-hover">
       <thead class="data-grid-header">
-        <!-- table header -->
         <tr>
           <th class="hidden-xs">
             <span class="fa fa-calendar fa-lg"></span>&nbsp;&nbsp;
@@ -91,7 +90,7 @@
                 <i class="fa fa-flag fa-stack-1x fa-inverse"></i>
               </span-->
             </a>
-            
+            <a class="table-btn" ng-click="getArray(visit._id)"><span class="fa fa-file-text-o fa-lg" tooltips tooltip-template="Export Session Notes"/></a>
             </div>
 
             <a class="table-btn" href="#/visits/{{visit._id}}/uploadFiles" tooltips tooltip-template="Upload Files" ng-if="!visitGrid && ((visit.status === 'tentative' && visit.visitors.length >= 1) || (visit.status === 'confirm' && visit.visitors.length >= 1 || visit.status ==='re-submitted'))"><span class="fa fa-paperclip fa-lg"/></a>
@@ -101,6 +100,7 @@
             <a class="table-btn" href="#/visits/{{visit._id}}/vman" tooltips tooltip-template="View Visit" ng-if="visitGrid && (( visit.status == 'cancelled' || visit.status == 'close'))"><span class="fa fa-eye fa-lg"/></a>
 
             <a class="table-btn" href="#/visits/{{visit._id}}/closeSummary" tooltips tooltip-template="Close Summary" ng-if=" visit.status == 'close'"><span class="fa fa-file-text-o fa-lg"/></a>
+            
           </td>
         </tr>
 
