@@ -45,7 +45,7 @@ module.exports = function(req, res, next) {
 
               if ((req.url.indexOf('admin') >= 0 && secure.isInAnyGroups(user,"admin") == true) ||
               (req.url.indexOf('admin') < 0 && req.url.indexOf('/api/v1/') >= 0) || usersGroupPresent || req.url.includes('/users/email/')
-              || req.url.includes('/find/find?query') || req.url.length == 51){
+              || req.url.includes('/find/find?query') || req.url.length == 51  || (req.url.length == 27 && req.url.includes('/users/'))){
       					next(); // To move to next middleware
               }
               else {

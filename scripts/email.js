@@ -41,6 +41,7 @@ email.getAgenda 						= getAgenda;
 email.calendarInvites					= calendarInvites;
 email.cancelledCalendarInvites 			= cancelledCalendarInvites;
 email.reScheduleEmail					= reScheduleEmail;
+email.cancelVisit						= cancelVisit;
 
 module.exports = email;
 
@@ -1623,4 +1624,110 @@ function diff(arr1, arr2) {
 		return arr1.indexOf(ele) == -1;
 	});
 	return filteredArr1.concat(filteredArr2);
+}
+
+function cancelVisit(visitId) {
+
+	if(config.get('email.send-mails')!="true") return;
+		var templateDir = path.join(constants.paths.templates, 'email', 'cancelVisit');
+		var mailTemplate = new emailTemplate(templateDir);
+
+		modelVisit
+		.findOne({ _id: visitId })
+		.populate('client')
+		.populate('createBy')
+		.populate('anchor')
+		.exec(function (err, visit) {
+			if(err) {
+				console.log(err);
+			}
+			else{
+				console.log(visit);
+				if(visit.client.name == visit.client.subName)
+				{
+					var subject = visit.client.name + "  visit planning - Visit Cancelled"
+				}
+				if(visit.client.name != visit.client.subName)
+				{
+					var subject = visit.client.name + " "+ visit.client.subName + " visit planning - Visit Cancelled"
+				}
+				console.log(subject);
+				var emailIds = [];
+				var receiversEmailIds = [];
+				visitService.getRegionsHeads(visitId)
+				.then(function(regHead)
+				{
+					if(regHead != null || regHead != "" || regHead != undefined) {
+						emailIds.push(regHead);
+					}
+					
+				});
+
+				visitService.getOfferingsHeads(visitId)
+				.then(function(offHeads){
+					for(var i=0;i<offHeads.length;i++)
+					{
+						if(offHeads[i] != null || offHeads[i] != "" || offHeads[i] != undefined) {
+							emailIds.push(offHeads[i]);
+						}
+					}
+
+				visitService.getParticipantsForOverAllFeedback(visitId)
+				.then(function(participants){
+					console.log("THIS IS PARTICIPANTS");
+					console.log(participants);
+					receiversEmailIds.push(visit.anchor.email);
+					
+					groupService.getUsersByGroup("admin")
+					.then(function(users){
+						users.forEach(function(user){
+							receiversEmailIds.push(user.email);
+						});
+					});
+
+					console.log(receiversEmailIds);
+
+					participants["employees"].forEach(function(p){
+						emailIds.push(p.email);
+					});
+
+					console.log(emailIds);
+					console.log(receiversEmailIds);
+
+					mailTemplate.render(visit, function (err, results) {
+
+						console.log(results);
+						
+						if(err){
+							return console.log(err);
+						}
+
+						var mailOptions = {
+							from: config.get('email.from'),
+											to: emailIds, // list of receivers
+											cc: receiversEmailIds,
+											subject: subject, // Subject line
+											text: results.text, // plaintext body
+											html: results.html // html body
+											
+										};
+
+										console.log(mailOptions);
+									// send mail with defined transport object
+									transporter.sendMail(mailOptions, function(error, info){
+										if(error){
+											return console.log(error);
+										}
+										console.log("Send Mail:: inviteAttendees  -- Status: "+ info.response);
+										console.log('Notifications sent to ' + emailIds);
+										console.log('Notifications sent to ' + receiversEmailIds);
+										transporter.close();
+									}); // end of transporter.sendMail
+
+								}); // end of register mail render
+							}); // end of visitService.getParticipantsForOverAllFeedback
+						});
+					} //end of else
+			}) // end of modelVisit
+
 }

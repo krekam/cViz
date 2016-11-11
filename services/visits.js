@@ -912,16 +912,24 @@ function getParticipantsForOverAllFeedback(id){
 			scheduleModel
 			.find({visit: id})
 			.populate('invitees')
+			.populate('session.owner')
+			.populate('session.supporter')
 			.exec(function(err, schedules){
 				if(err)
 					console.log(err);
 				else {
 					schedules.forEach(function(sch){
 						if (sch.session.owner!= null) {
-							arrAddItem(emp, sch.session.owner);
+							if(sch.session.owner.association != "customer"){
+								arrAddItem(emp, sch.session.owner);
+							}
+
 						}
 						if (sch.session.supporter!= null) {
-							arrAddItem(emp, sch.session.supporter);}
+							if(sch.session.supporter.association != "customer"){
+								arrAddItem(emp, sch.session.supporter);
+							}
+						}
 						if (sch.invitees.length!=0 && sch.invitees!= undefined && sch.invitees != null && sch.invitees != "") {
 							for (var i = 0; i < sch.invitees.length; i++) {
 								switch(sch.invitees[i].association)    {

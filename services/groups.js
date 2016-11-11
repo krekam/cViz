@@ -112,8 +112,13 @@ function getUsersByGroup(name){
           deferred.reject(err);
         }
         else{
-          deferred.resolve(item.users);
-				}
+            if(item != null) {
+                deferred.resolve(item.users);
+			}
+            else {
+                deferred.resolve("Doesn't exists. Plz give a valid group name");
+            }
+        }
     });
 
     return deferred.promise;
