@@ -2986,6 +2986,10 @@ $scope.cancelVisit=function(cancelReason){
             $location.path("visits/list"); 
 
           });
+
+          $http.get('/api/v1/secure/email/'+ $scope.visitid +'/cancelvisit').success(function(response) {
+               // console.log(response);
+          });
           
           growl.info(parse("Cancelled visit successfully"));
         }
