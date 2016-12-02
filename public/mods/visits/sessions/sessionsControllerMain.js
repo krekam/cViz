@@ -95,8 +95,8 @@ visitsApp.controller('sessionsControllerMain', ['$scope', '$http', '$routeParams
 				$scope.cscData.push($scope.clientData[i]);
 			}
 		}
-		console.log($scope.uniClient);
-		console.log($scope.cscData);
+		// console.log($scope.uniClient);
+		// console.log($scope.cscData);
 	});
 		var refresh = function(){
 			$http.get('/api/v1/secure/visitSchedules/visit/' + $scope.visitId ).success(function(response) {
@@ -371,7 +371,7 @@ visitsApp.controller('sessionsControllerMain', ['$scope', '$http', '$routeParams
 				$scope.schedule.feedbackTemplate = $scope.sessionFeedbackId;
 			}
 		}
-		console.log($scope.schedule);
+		// console.log($scope.schedule);
 	    switch ($scope.mode) {
 	      case "add":
 	        $scope.create();
@@ -386,7 +386,7 @@ visitsApp.controller('sessionsControllerMain', ['$scope', '$http', '$routeParams
 
 	  $scope.create = function() {
 	    $http.post('/api/v1/secure/visitSchedules', $scope.schedule).success(function(response) {
-	    console.log(response);
+	    // console.log(response);
 		    if($scope.schedule.session.title === "" || $scope.schedule.session.title === null || $scope.schedule.session.title === undefined )
 			{
 			growl.info(parse("New session schedule added"));

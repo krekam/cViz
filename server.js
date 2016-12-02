@@ -61,7 +61,7 @@ app.use('/api/v1/upload/:entity',multer({
       && extension !=='docx' && extension !== 'ppt' && extension !=='pptx' && extension !=='xls' &&  extension !=='xlsx' 
       && extension !=='pdf' && extension !=='mp4' &&  extension !=='mkv' && extension !=='avi' && extension !=='wmv' 
       && extension !=='mp3' && extension !=='wav' && extension !=='aac' && extension !=='PNG' && extension !=='JPG' 
-      && extension !=='JPEG' && extension!=='GIF')
+      && extension !=='JPEG' && extension!=='GIF' && mimeType !== 'image/png')
     {
       console.log("INVALID FILE ENTERED INTO SYSTEM");
       return false;
@@ -91,7 +91,7 @@ app.use('/api/v1/multiupload/:entity',multer({
       && extension !=='docx' && extension !== 'ppt' && extension !=='pptx' && extension !=='xls' &&  extension !=='xlsx' 
       && extension !=='pdf' && extension !=='mp4' &&  extension !=='mkv' && extension !=='avi' && extension !=='wmv' 
       && extension !=='mp3' && extension !=='wav' && extension !=='aac' && extension !=='PNG' && extension !=='JPG' 
-      && extension !=='JPEG' && extension!=='GIF')
+      && extension !=='JPEG' && extension!=='GIF' && mimeType !== 'image/png')
     {
       console.log("INVALID FILE ENTERED INTO SYSTEM");
       return false;

@@ -204,6 +204,6 @@ manageModule.config(function($httpProvider) {
 });
 
 function htmlToPlaintext(text) {
-  console.log(text);
+  
   return text ? String(text).replace(/<[^>]+>/gm, '') : '';
 }

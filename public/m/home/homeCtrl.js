@@ -17,7 +17,7 @@ appMUserService.activeMUser().then(function(user){
 	  }else if(user.groups.includes("user") === true){
 	  	$scope.group= "user";
 	  }
-	  console.log($scope.group);
+	  // console.log($scope.group);
 
 	// $scope.current = new Date();
 	// appServicem.activeVisit($routeParams.id).then(function(avisit){
@@ -30,7 +30,7 @@ appMUserService.activeMUser().then(function(user){
 
 	appServicem.activeVisit($routeParams.id).then(function(avisit){
 			$scope.vid = $routeParams.id;
-			console.log(avisit);
+			// console.log(avisit);
 		if(avisit==''||avisit==null||avisit==undefined)
 		{
 			$scope.button = 'disable';
@@ -122,7 +122,7 @@ appMUserService.activeMUser().then(function(user){
 
 app.controller('welcomeCtrl', ['$scope', 'location','$http','$routeParams','$rootScope','appService','appMUserService','appServicem',function ($scope, location,$http,$routeParams,$rootScope,appService, appMUserService, appServicem) {
   appMUserService.activeMUser().then(function(user){
-    console.log("thsis"+user._id);
+    // console.log("thsis"+user._id);
     $scope.activeUser = user;
     // $scope.group = user.groups;
 	if(user.groups.includes("vManager") === true){
@@ -134,7 +134,7 @@ app.controller('welcomeCtrl', ['$scope', 'location','$http','$routeParams','$roo
 	  }else if(user.groups.includes("user") === true){
 	  	$scope.group= "user";
 	  }
-	  console.log($scope.group);
+	  // console.log($scope.group);
 	$scope.order = 0;
 	$scope.myData = [];
 	$scope.keynotes = [];	
@@ -195,7 +195,7 @@ app.controller('welcomeCtrl', ['$scope', 'location','$http','$routeParams','$roo
 		$http.get('/api/v1/secure/visits/'+avisitData._id+'/keynotes',{
 			cache: true
 		}).success(function(response) {
-			console.log(response);
+			// console.log(response);
 			if(response[0] != "")
 			{
 				$scope.button1 = "true";
@@ -224,7 +224,7 @@ app.controller('welcomeCtrl', ['$scope', 'location','$http','$routeParams','$roo
 						$http.get('/api/v1/secure/visits/'+avisitData._id,{
 							cache: true
 						}).success(function(response) {
-							console.log(response);
+							// console.log(response);
 							for (var i = 0; i < response.visitors.length; i++) {
 
 								if(response.visitors[i].visitor === $scope.activeUser._id)
@@ -494,7 +494,7 @@ app.controller('welcomeCtrl', ['$scope', 'location','$http','$routeParams','$roo
 				$http.get('/api/v1/secure/visits/'+avisit._id,{
 					cache: true
 				}).success(function(response) {
-					console.log(response.client.name);
+					// console.log(response.client.name);
 					$scope.clientName = response.client.name;
 					$scope.clientLogo = response.client.logo;
 	   				$scope.previewoption = response.preview;
@@ -517,17 +517,17 @@ app.controller('welcomeCtrl', ['$scope', 'location','$http','$routeParams','$roo
 $scope.vid = avist._id;
 });
 	   $scope.preview = function(previewoption) {
-	   	console.log(previewoption);
+	   	// console.log(previewoption);
 	    $http.get('/api/v1/secure/visits/' + $scope.vid).success(function(response)
  		{
- 			console.log(response);
+ 			// console.log(response);
  		// $scope.response = response;
  						response.preview = previewoption;
 
- 						console.log(response.preview);
+ 						// console.log(response.preview);
  						$scope.visits = response;
 								var inData = $scope.visits;
-								console.log(inData);
+								// console.log(inData);
 								inData.client=$scope.visits.client._id;
 								inData.createBy = $scope.visits.createBy._id;
 								if(inData.cscPersonnel.salesExec != null || inData.cscPersonnel.salesExec != undefined)
@@ -635,7 +635,7 @@ $scope.vid = avist._id;
  			
       $http.put('/api/v1/secure/visits/' + $scope.vid,  inData).success(function(response1) { 
 
-console.log(response1);
+		console.log(response1);
 
       });
 	
