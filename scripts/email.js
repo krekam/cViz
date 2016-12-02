@@ -1554,9 +1554,9 @@ function reScheduleEmail(visitId,startDate,endDate) {
 				toemailIds.push(e.email);
 			});
 
-			participants["clients"].forEach(function(c){
-				toemailIds.push(c.email);
-			});
+			// participants["clients"].forEach(function(c){
+			// 	toemailIds.push(c.email);
+			// });
 		    
 
 		groupService.getUsersByGroup("admin")
@@ -1685,7 +1685,7 @@ function cancelVisit(visitId) {
 						});
 					});
 
-					console.log(receiversEmailIds);
+					// console.log(receiversEmailIds);
 
 					participants["employees"].forEach(function(p){
 						emailIds.push(p.email);

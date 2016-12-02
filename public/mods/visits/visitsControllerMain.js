@@ -462,7 +462,7 @@ var refresh = function() {
       $scope.industryClient = false;
       $scope.regionClient = false;
       $scope.visits = $http.get('/api/v1/secure/visits/' + id).success(function(response){
-        console.log(response);
+        // console.log(response);
         $scope.visitManagerAnchor = response.anchor;
         $scope.visitManagerSecondary = response.secondaryVmanager;
         $scope.visitFlagNumber = response.visitFlagNumber;
@@ -1188,14 +1188,13 @@ break;
     // console.log($scope.visits);
     // console.log($scope.visits.clientIdData)
 
-    console.log($scope.visitorsTab);
-    console.log($scope.visitFlagNumber);
+    // console.log($scope.visitorsTab);
+    // console.log($scope.visitFlagNumber);
 
     var inData       = $scope.visits;
-    console.log(inData.visitors);
+    // console.log(inData.visitors);
     if($scope.visitorsTab == true && $scope.visitFlagNumber == 0 && inData.visitors.length!=0)
-    {
-      console.log(" i am inside email");
+    {      
       $http.get('/api/v1/secure/email/'+ inData._id+'/newvisit').success(function(response) {
         console.log(response);
       })
@@ -1311,7 +1310,7 @@ break;
       .error(function(data, status){
         growl.error("Error updating client");
     }); // http put keynoges ends
-      console.log(inData);
+      // console.log(inData);
       $http.put('/api/v1/secure/visits/' + $scope.visits._id,  inData).success(function(response) {
        refresh();
        growl.info(parse("visit [%s]<br/>Edited successfully",  client.name));

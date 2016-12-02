@@ -3,16 +3,16 @@
 angular.module('userAutoDirective', [])
 .controller('userAutoDirectiveControllerMain', ['$scope', '$http', '$timeout', function($scope, $http, $timeout) {
 
-  console.log($scope.userType);
-  console.log($scope.userRef);
+  // console.log($scope.userType);
+  // console.log($scope.userRef);
   if($scope.userModel === undefined || $scope.userModel === "")
     $scope.showFlag = "none";
   else
     $scope.showFlag = "user";
 
   $scope.getUser = function(){
-        console.log($scope.userId);
-    console.log($scope.userEmail);
+    // console.log($scope.userId);
+    // console.log($scope.userEmail);
     var url= "";
     if($scope.userId!="" && $scope.userId!=undefined){
       // $scope.showFlag = "none";

@@ -87,9 +87,9 @@ serv.factory('appServicem', ['$http', '$q', function ($http, $q){
 
 	appServicem.activeVisit = function (id) {
 		var defer = $q.defer();
-		console.log(id);
+		// console.log(id);
 		if(id == undefined){ 
-		console.log(' this is null');
+		
 		$http.get('/api/v1/secure/visits/all/activeVisit',{
 			cache: true
 		}).success(function(response) {
@@ -98,8 +98,8 @@ serv.factory('appServicem', ['$http', '$q', function ($http, $q){
 				var visitStatus = response.visits.status;
 				
 				if(response.visits !== undefined){
-					console.log(visitStatus);
-					console.log(user.groups);
+					// console.log(visitStatus);
+					// console.log(user.groups);
 					if(user.groups.includes("admin") === true){
 						var group = "admin";
 					}else
@@ -136,7 +136,7 @@ serv.factory('appServicem', ['$http', '$q', function ($http, $q){
 	}
 
 	else {
-		console.log('this is id');
+		// console.log('this is id');
 		$http.get('/api/v1/secure/visits/'+ id,{
 			cache: true
 		}).success(function(response) {
@@ -204,7 +204,7 @@ serv1.factory('appMUserService', ['$http', '$q', function ($http, $q){
 		$http.get('/token',{
 			cache: true
 		}).success(function(response) {
-			console.log(response);
+			// console.log(response);
 			if(response !== undefined){
 				defer.resolve(response);
 			}

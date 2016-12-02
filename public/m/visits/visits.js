@@ -18,7 +18,7 @@ angular.module('visits', ['ngRoute'])
 		}).success(function(response) {
 			if(response.visits !== undefined){
 				$rootScope.activeVisit = response.visits;
-				console.log($rootScope.activeVisit);
+				// console.log($rootScope.activeVisit);
 			}
 			else {
 				console.log("Not active visit");
