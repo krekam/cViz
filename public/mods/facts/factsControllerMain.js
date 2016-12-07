@@ -124,7 +124,7 @@ console.log($scope.mode);
   $scope.create = function() {
     $http.post('/api/v1/secure/facts', $scope.facts).success(function(response) {
       refresh();
-      growl.info(parse("fact [%s]<br/>Added successfully"));
+      growl.info(parse("fact Added successfully"));
     })
     .error(function(data, status){
       growl.error("Error adding fact");
@@ -135,7 +135,7 @@ console.log($scope.mode);
     var title = facts.title;
     $http.delete('/api/v1/secure/facts/' + facts._id).success(function(response) {
       refresh();
-      growl.info(parse("facts [%s]<br/>Deleted successfully"));
+      growl.info(parse("facts Deleted successfully"));
     })
     .error(function(data, status){
       growl.error("Error deleting fact");
@@ -149,7 +149,7 @@ console.log($scope.mode);
     facts.title = title;
     $http.post('/api/v1/secure/facts/',facts).success(function(response) {
       refresh();
-      growl.info(parse("Fact [%s]<br/>Copied successfully"));
+      growl.info(parse("Fact Copied successfully"));
     })
     .error(function(data, status){
       growl.error("Error Copying Fact");
