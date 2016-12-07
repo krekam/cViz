@@ -16,7 +16,10 @@ appMUserService.activeMUser().then(function(user){
 	  	$scope.group = "exec";
 	  }else if(user.groups.includes("user") === true){
 	  	$scope.group= "user";
+	  }else if(user.groups.includes("customer") === true){
+	  	$scope.group= "customer";
 	  }
+
 	  // console.log($scope.group);
 
 	// $scope.current = new Date();
@@ -134,6 +137,9 @@ app.controller('welcomeCtrl', ['$scope', 'location','$http','$routeParams','$roo
 	  }else if(user.groups.includes("user") === true){
 	  	$scope.group= "user";
 	  }
+	  else if(user.groups.includes("customer") === true){
+	  	$scope.group= "customer";
+	  }
 	  // console.log($scope.group);
 	$scope.order = 0;
 	$scope.myData = [];
@@ -157,12 +163,13 @@ app.controller('welcomeCtrl', ['$scope', 'location','$http','$routeParams','$roo
     		if($scope.activeUser.groups=='exec'){
     			angular.element('#videoModal').modal('hide');
     		}
-    		if($scope.activeUser.groups.includes("vManager") === true || $scope.activeUser.groups.includes("admin") === true || $scope.activeUser.groups.includes("user") === true)
+    		if($scope.activeUser.groups.includes("vManager") === true 
+    			|| $scope.activeUser.groups.includes("admin") === true || $scope.activeUser.groups.includes("user") === true)
     		{
-    		if(avisitData!=''||avisitData!=null||avisitData!=undefined)
-    		{
-    			angular.element('#videoModal').modal('show');
-    		}
+	    		if(avisitData!=''||avisitData!=null||avisitData!=undefined)
+	    		{
+	    			angular.element('#videoModal').modal('show');
+	    		}
     		}
     		$http.get('/api/v1/secure/visits/'+avisitData._id,{
     			cache: true
