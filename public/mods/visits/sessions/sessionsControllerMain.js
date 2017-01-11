@@ -22,8 +22,8 @@ visitsApp.factory('SessionDataService', ["$http", function ($http) {
   };
 }]);
 
-visitsApp.controller('sessionsControllerMain', ['$scope', '$http', '$routeParams', '$location', 'growl', '$filter', '$mdDialog','SessionService',
-  function($scope, $http, $routeParams ,$location, growl, $filter, $mdDialog,SessionDataService) {
+visitsApp.controller('sessionsControllerMain', ['$scope', '$http', '$routeParams', '$location', 'growl', '$filter', '$mdDialog','SessionService', 'PagerService',
+  function($scope, $http, $routeParams ,$location, growl, $filter, $mdDialog,SessionDataService, PagerService) {
 
 		$scope.visitId = $routeParams.id;
 

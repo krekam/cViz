@@ -46,6 +46,7 @@ service.getPDFSessionsById = getPDFSessionsById;
 service.getOfferingsHeads = getOfferingsHeads;
 service.getRegionsHeads = getRegionsHeads;
 service.getParticipantsForOverAllFeedback = getParticipantsForOverAllFeedback;
+service.getCount = getCount;
 
 module.exports = service;
 
@@ -64,12 +65,46 @@ function getAll(){
 	return deferred.promise;
 } // getAll method ends
 
+/*function getAll(page,perPage,sort,query,fields){
+
+	// console.log("--------- in getAll of service  page,perPage,sort,query,fields = ", page,perPage,sort,query,fields)
+    var deferred = Q.defer();
+    var header = [];
+    header.push({
+        'start' : page,
+        'size' : perPage,
+        'filter' : query,
+        'sort' : sort,
+        'fields' : fields
+    })
+    model
+    .find(query)
+    .populate('client')
+    .limit(perPage)
+    .skip(perPage*page)
+    .sort(sort)
+    .select(fields)
+    .exec(function(err, list){
+        if(err) {
+            console.log(err);
+            deferred.reject(err);
+        }
+        else
+            deferred.resolve(list);
+    });
+
+    return deferred.promise;
+} // getAll method ends*/
+
 // Method implementations
 //ToDo:: Fix Known issues
 // 2. Date are not as per UTC, timezone is effecting the date filters , limit){ , limit);
 // 3. Custo9mers are not filtered by visit. They can access any visit of the client irrective of being part of it
 
-function getMyVisits(thisUser, timeline){
+function getMyVisits(thisUser, timeline, limit, page, perPage, sort, query, fields){
+
+	// console.log("----------- in getMyVisits service ", limit, page, perPage, sort, query, fields)
+
 	var deferred = Q.defer();
 
 	// massage params
@@ -91,68 +126,102 @@ function getMyVisits(thisUser, timeline){
 
 		var sessionVisits = arrUnique(projected);
 
+		var today = moment().startOf('day');
+		var pastEnd = moment.utc(today).subtract(1, 'days');
+		var pastBegin = moment.utc(pastEnd).subtract(3,'years');
+
 		if( secure.isInAnyGroups(thisUser, "customer"))	{
-				filter = {client : thisUser.orgRef};  // all visits by his company
+				filter = {
+					$and: [
+					{client : thisUser.orgRef}
+					, {startDate: {$gte: pastBegin, $exists: true, $ne: null}}
+					]
+					};
+
+				// filter = {client : thisUser.orgRef};  // all visits by his company
 			}
 			else if(secure.isInAnyGroups(thisUser, "exec")){
+				filter = {startDate: {$gte: pastBegin, $exists: true, $ne: null}};
 			}
 			else if(secure.isInAnyGroups(thisUser, "admin")){
+				filter = {startDate: {$gte: pastBegin, $exists: true, $ne: null}};
 			}
 			else if( secure.isInAnyGroups(thisUser, "vManager")){
 				filter = {
-					$or: [
-					{createBy: userId}
-					, {agm: userId}
-					, {anchor: userId}
-					, {secondaryVmanager: userId}
-					, {'cscPersonnel.salesExec': userId}
-					, {'cscPersonnel.accountGM': userId}
-					, {'cscPersonnel.industryExec': userId}
-					, {'cscPersonnel.globalDelivery': userId}
-					, {'cscPersonnel.cre': userId}
-					, {'_id': { $in: sessionVisits }}
-					, {'invitees': userId }
+
+					$and: 
+					[
+					 	{startDate: {$gte: pastBegin, $exists: true, $ne: null}},
+
+						{$or: 
+						[
+							{createBy: userId}
+							, {agm: userId}
+							, {anchor: userId}
+							, {secondaryVmanager: userId}
+							, {'cscPersonnel.salesExec': userId}
+							, {'cscPersonnel.accountGM': userId}
+							, {'cscPersonnel.industryExec': userId}
+							, {'cscPersonnel.globalDelivery': userId}
+							, {'cscPersonnel.cre': userId}
+							, {'_id': { $in: sessionVisits }}
+							, {'invitees': userId }
+						]}
+
 					]
 				};
 			} // end of secure if
 			else if( secure.isInAnyGroups(thisUser, "user")){
 				filter = {
-					$or: [
-					{createBy: userId}
-					, {agm: userId}
-					, {anchor: userId}
-					, {secondaryVmanager: userId}
-					, {'cscPersonnel.salesExec': userId}
-					, {'cscPersonnel.accountGM': userId}
-					, {'cscPersonnel.industryExec': userId}
-					, {'cscPersonnel.globalDelivery': userId}
-					, {'cscPersonnel.cre': userId}
-					, {'_id': { $in: sessionVisits }}
-					, {'invitees': userId }
+
+					$and: 
+					[
+					 	{startDate: {$gte: pastBegin, $exists: true, $ne: null}},
+
+						{$or: 
+						[
+							{createBy: userId}
+							, {agm: userId}
+							, {anchor: userId}
+							, {secondaryVmanager: userId}
+							, {'cscPersonnel.salesExec': userId}
+							, {'cscPersonnel.accountGM': userId}
+							, {'cscPersonnel.industryExec': userId}
+							, {'cscPersonnel.globalDelivery': userId}
+							, {'cscPersonnel.cre': userId}
+							, {'_id': { $in: sessionVisits }}
+							, {'invitees': userId }
+						]}
+
 					]
 				};
 			}
-
 			var visitsByTimeline = new Array();
+
 			model
-			.find(filter)
+			.find(filter)	
+			.limit(perPage)
+		    .skip(perPage*page)		
 			.populate('client')
 			.sort('startDate')
 			.exec(function(err, list){
+				// console.log("------- list in getMyVisits() = " , list);
 				if(err) {
 					deferred.reject(err);
 				}
 				else{
 					transform(list);
 					deferred.resolve(visitsByTimeline);
+					// console.log(" ------------ visitsByTimeline = ", visitsByTimeline)
+					// console.log(" ------------ visitsByTimeline[past].visits.length = ", visitsByTimeline["past"].visits.length	)
 				}
 			})
 
 			function transform(visits){
 
 				var visitsSorted =  _.sortBy( visits, 'startDate' );
-
 				visitsSorted.forEach(function(visit){
+
 
 					var involved = [];
 
@@ -261,7 +330,11 @@ var past = moment.range(pastBegin, pastEnd);
 var further = moment.range(furtherStart, furtherEnd);
 var nextOne = moment.range(thisDay.start._d, nextWeekEndsOn)
 
+	// console.log("---------- visitsSorted  = " ,visitsSorted);
+	// console.log("---------- visitsSorted.length  = " ,visitsSorted.length);
 visitsByTimeline = {
+
+
 	"past":{
 		start: pastBegin,
 		end: pastEnd,
@@ -284,13 +357,20 @@ visitsByTimeline = {
 	}
 }
 
-}
+}	//	end of transform
 
 function filterByRange(visits, range){
+	// console.log("----- visits = ", visits)
+	// console.log("----- visits.length = ", visits.length)
 	return(
 		visits.filter(function(x){
+	// console.log("----- visits.filter  x._id = ", x._id + ",  x.startDate = " , x.startDate +  ",  x.endDate = ", x.endDate)
 			var visitRange = moment.range(x.startDate, x.endDate);
+	// console.log("----- visitRange = ", visitRange)
+	// console.log("--------- range = " , range   +"----- range.overlaps(visitRange) = ", range.overlaps(visitRange))
+			
 			return range.overlaps(visitRange);
+			// return true;
 					})
 		);
 }
@@ -299,8 +379,10 @@ function filterByRange(visits, range){
 	logger.writeLine("Error " + err);
 	console.log(err.stack)
 });
+
 return deferred.promise;
-} // getAll method ends
+
+} // getMyVisits method ends
 
 /// For a given user Returns list of all the visitId by participating sessions
 function getUserSessions(userId){
@@ -974,6 +1056,25 @@ function getParticipantsForOverAllFeedback(id){
 		return deferred.promise;
 }
 
+
+function getCount(){
+    var deferred = Q.defer();
+    var today = moment().startOf('day');
+	var pastEnd = moment.utc(today).subtract(1, 'days');
+	var pastBegin = moment.utc(pastEnd).subtract(3,'years');
+
+    model.count({ 'startDate': {$gte: pastBegin, $exists: true, $ne: null} }, function(err, count){
+        if(err) {
+            console.log(err);
+            deferred.reject(err);
+        }
+        else{
+            deferred.resolve({totalCount:count});
+        }
+        
+    });
+    return deferred.promise;
+}
 
 
 function getVisitSessionsByDate(visitId, thisDate){

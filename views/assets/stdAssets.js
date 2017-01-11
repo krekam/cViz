@@ -203,7 +203,8 @@ module.exports = {
 		"cdn":[],
 		"dev":[
 		"/public/libs/moment/moment.js",
-		"/public/libs/moment-range/dist/moment-range.js"
+		"/public/libs/moment-range/dist/moment-range.js",
+		"/public/libs/underscore/underscore.js"
 		],
 	},
 
@@ -214,6 +215,7 @@ module.exports = {
 		"/public/libs/angular-filter/dist/angular-filter.min.js"
 		],
 		"prod":[
+		"/public/libs/underscore/underscore-min.js"
 		]
 	},
 

@@ -59,9 +59,10 @@ visitsApp.factory('KeynoteService', ["$http", function ($http) {
   };
 }]);
 
-visitsApp.controller('visitsControllerMain', ['$scope','appUserService', '$http', '$route', '$filter', '$routeParams','$rootScope', '$location', 'growl', '$window','$mdDialog', '$mdMedia','$timeout','Upload', 'FeedbackService', 'KeynoteService',
-  function($scope,appUserService, $http, $route,$filter, $routeParams, $rootScope, $location, growl, $window ,$mdDialog , $mdMedia ,$timeout, Upload, FeedbackService, SessionService, KeynoteService) {
+visitsApp.controller('visitsControllerMain', ['PagerService', 'appInfoService', '$scope', 'appUserService', '$http', '$route', '$filter', '$routeParams','$rootScope', '$location', 'growl', '$window','$mdDialog', '$mdMedia','$timeout','Upload', 'FeedbackService', 'KeynoteService', function(PagerService, appInfoService,$scope,appUserService, $http, $route,$filter, $routeParams, $rootScope, $location, growl, $window ,$mdDialog , $mdMedia ,$timeout, Upload, FeedbackService, SessionService, KeynoteService) {
 
+    
+  appInfoService.appInfo().then(function(info){
     appUserService.activeUser().then(function(user){
     //console.log("thsis"+user._id);
     $scope.activeUser = user;
@@ -230,6 +231,8 @@ $scope.visitAllvMan = function() {
     // var today = new Date();
     // console.log(today);
     $http.get('/api/v1/secure/visits').success(function(response) {
+
+      // console.log("----------- inside $scope.visitAllvMan = function() ")
       //$scope.VisitsAllList = response;
 
       // for (var i = 0; i < response.length; i++) {
@@ -386,7 +389,9 @@ if($scope.mode == 'edit')
 
   refresh1();
 }
-var refresh = function() {
+
+
+var refresh = function(start) {
   $scope.setTimeline = function(time){
     $scope.VisitVmag = false;
     $scope.allViei=true;
@@ -394,10 +399,21 @@ var refresh = function() {
       $scope.timeline = time;
       // console.log("setting timeline to " + $scope.timeline )
       $scope.visitBatch = $scope.allVisits[$scope.timeline];
+
+      // console.log("------  $scope.setTimeline ------$scope.visitBatch = ",$scope.visitBatch)
+
     }
     
-    $http.get('/api/v1/secure/visits/all/my').success(function(response) {
+    var visitsListUrl = '/api/v1/secure/visits/all/my';
+    visitsListUrl += "?start=" + start + '&size='+10;
+    $http.get(visitsListUrl).success(function(response) {
+      // console.log("---- visitsListUrl = ", visitsListUrl)
+      // console.log("----------- response.length = ", response.length)
       $scope.allVisits = response;
+      // console.log("-----in direct response from $http.get  $scope.allVisits = " ,  $scope.allVisits)
+      // console.log("----------- $scope.allVisits['past'].visits.length = ", $scope.allVisits["past"].visits.length)
+
+      $scope.allVisits1 = response;
       // console.log("after delete :"+$scope.allVisits)
       var allVisits = [];
       // var key ="today";
@@ -406,7 +422,7 @@ var refresh = function() {
        var value = $scope.allVisits[key]
        if(key === "today" || key === "further" || key === "past"){
         allVisits.push.apply(allVisits, value.visits);
-        //console.log(value.visits.length, allVisits.length);
+        // console.log("------- value.visits.length, allVisits.length = " ,value.visits.length, allVisits.length);
 
       }
     })
@@ -435,11 +451,13 @@ var refresh = function() {
         $scope.timeline = "all";
         // console.log("no timeline. Set to " + $scope.timeline);
         $scope.visitBatch = $scope.allVisits[$scope.timeline];
+        // console.log("-----  if($scope.timeline==''  ---  $scope.visitBatch.visits) = " ,  $scope.visitBatch.visits);
       }
       else{
        $scope.timeline = "all";
        // console.log("no timeline. Set to " + $scope.timeline);
        $scope.visitBatch = $scope.allVisits[$scope.timeline];
+        // console.log("-----  in else  ---  $scope.visitBatchb.visits)   = " ,  $scope.visitBatch.visits);
      }
      // console.log(JSON.stringify($scope.visitBatch,null,2));
 
@@ -836,7 +854,76 @@ break;
     }); // Get visit call back ends
   }; // Refresh method ends
 
-  refresh();
+  // refresh(0);
+
+  $scope.listOfVisitsCount = function(page) 
+  {
+    var url = '/api/v1/secure/visits/xyz/abc/pqr/visitsCount';
+
+    // console.log("------- inside $scope.listOfTasksCount ----------------- ")
+    // if($scope.activeUser.groups.indexOf("admin") > -1)
+    // {
+      // var url = '/api/v1/secure/visits/xyz/abc/pqr/visitsCount';
+    // }
+    // if($scope.activeUser.groups!='admin')
+    // {
+    //   url = '/api/v1/secure/admin/tasksCount?mode=created';
+    // }
+    $http.get(url).success(function(data) {
+      $scope.tasksCount = data.totalCount;
+      // $scope.tasksCount = 333;
+      console.log("------- $scope.tasksCount = " , $scope.tasksCount)
+      if (data != null) {
+        $scope.dummyItems = _.range(0, $scope.tasksCount); // dummy array of items to be paged
+        $scope.pager = {};
+        $scope.setPage = setPage;
+
+        if (page == undefined) {
+          initController();
+
+          function initController() {
+            // initialize to page 1
+            $scope.setPage(1);
+          }
+        }
+
+        if (page != undefined) {
+          $scope.setPage(page);
+        }
+
+        function setPage(page) {
+          if (page < 1 || page > $scope.pager.totalPages) {
+            return;
+          }
+
+          // console.log("  ------ $scope.dummyItems.length, page,info.UI.pagination.size : " , $scope.dummyItems.length, page)
+          // get pager object from service
+          $scope.pager = PagerService.GetPager($scope.dummyItems.length, page,info.UI.pagination.size);
+          // $scope.pager = PagerService.GetPager($scope.dummyItems.length, page, 10);
+          $scope.vmPager = $scope.pager;
+
+
+          // console.log("---------------$scope.vmPager = ", $scope.vmPager)
+
+          $scope.start = ($scope.pager.currentPage - 1);
+          $scope.startPage = $scope.start * info.UI.pagination.size;
+          // $scope.startPage = $scope.start * 10;
+          $scope.userSize = $scope.startPage + info.UI.pagination.size;
+          // $scope.userSize = $scope.startPage + 10;
+          // get current page of items
+          $scope.items = $scope.dummyItems.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
+          $scope.$scopeItems = $scope.items;
+          refresh($scope.start);
+          // refreshTemp($scope.start);
+        }
+      }
+    });
+  }
+
+$scope.listOfVisitsCount();
+
+
+
   $scope.saveDraft=function() {
     // console.log($scope.visits.clientName);
     if ($scope.visits.clientName != undefined || $scope.visits.subName != undefined|| $scope.visits.regions != undefined ||  $scope.parentSelected != undefined || $scope.childSelected != undefined){
@@ -1175,7 +1262,7 @@ break;
     $scope.delete = function(visits) {
       var title = visits.title;
       $http.delete('/api/v1/secure/visits/' + visits._id).success(function(response) {
-        refresh();
+        refresh($scope.start);
         growl.info(parse("visit deleted successfully."));
       })
       .error(function(data, status){
@@ -1312,7 +1399,7 @@ break;
     }); // http put keynoges ends
       // console.log(inData);
       $http.put('/api/v1/secure/visits/' + $scope.visits._id,  inData).success(function(response) {
-       refresh();
+       refresh($scope.start);
        growl.info(parse("visit [%s]<br/>Edited successfully",  client.name));
 
        if ($scope.activeUser.groups.indexOf("vManager") > -1 || $scope.activeUser.groups.indexOf("admin") > -1) {
@@ -1651,7 +1738,7 @@ $scope.ClientDraft=false;
     
     $http.put('/api/v1/secure/visits/' + $scope.visits._id, $scope.visits).success(function(response) {
     });
-    refresh();
+    refresh($scope.start);
   }
   $scope.addSecMan=function(){
     $scope.addSec=true;
@@ -2798,7 +2885,7 @@ else{
 $scope.txtcomment = "";
 $scope.comment11 = [];
 // $route.reload();
-// refresh();
+// refresh($scope.start);
 }
 }
 
@@ -3558,7 +3645,8 @@ $scope.saveoverallfeed=function(){
       $location.path("visits/list"); 
     })
 }
-});
+}); // appUserService ends
+}); // appInfoService ends
 
 $scope.viewImageItem = function(x){
   window.open(x,'_blank');

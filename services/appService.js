@@ -1,4 +1,25 @@
+
 var service = {};
+
+service.info = getInfo;
+
+module.exports = service;
+
+var pjson 		= require('../package.json');
+var git 		= require('git-rev-sync');
+var util 		= require('../scripts/util');
+var constants   = require('../scripts/constants');
+var appConfig 	= require(constants.paths.config +  '/app');
+
+function getInfo(){
+
+
+    appConfig.appInfo.gitHash = git.short();
+    
+	return appConfig.appInfo;
+}
+
+/*var service = {};
 
 service.info = getInfo;
 
@@ -20,4 +41,4 @@ function getInfo(){
     };
 
 	return info;
-}
+}*/

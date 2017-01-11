@@ -17,7 +17,8 @@ module.exports = {
 			"/public/assets/g/css/toaster.css",
 			"/public/assets/w/styles/tooltip.css",
 			"/public/assets/w/styles/angucomplete.css",
-			"/public/assets/w/styles/angucomplete-alt.css"
+			"/public/assets/w/styles/angucomplete-alt.css",
+			"/public/assets/w/styles/paginationStyles.css"
 		],
 		"prod":[
 			"/public/assets/w/styles/layout.min.css",
@@ -33,7 +34,8 @@ module.exports = {
 			"/public/assets/g/js/toaster.css",
 			"/public/assets/w/styles/tooltip.css",
 			"/public/assets/w/styles/angucomplete.css",
-			"/public/assets/w/styles/angucomplete-alt.css"
+			"/public/assets/w/styles/angucomplete-alt.css",
+			"/public/assets/w/styles/paginationStyles.css"
 		]
 	},
 

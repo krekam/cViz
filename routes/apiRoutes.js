@@ -45,6 +45,8 @@ router.delete('/api/v1/secure/admin/users/:id', users.deleteById);
 router.get('/api/v1/secure/admin/users/email/:email', users.getByEmail);
 router.get('/api/v1/secure/admin/users/findAll/data', users.getAllUsers);
 router.get('/api/v1/secure/admin/users/find/find', users.getWithQuery);
+
+router.get('/api/v1/secure/admin/users/xyz/abc/pqr/usersCount', users.getCount);
 //Route for file upload
 //router.post('/api/v1/upload',fileupload.create);
 router.post('/api/v1/upload/:entity',fileupload.create);
@@ -103,6 +105,8 @@ router.get('/api/v1/secure/visits/:id/:action', visits.getWithAction);
 router.post('/api/v1/secure/visits', visits.create);
 router.put('/api/v1/secure/visits/:id', visits.updateById);
 router.delete('/api/v1/secure/visits/:id', visits.deleteById);
+router.get('/api/v1/secure/visits/xyz/abc/pqr/visitsCount', visits.getCount);
+
 
 // List of service routes for visitSchedules
 router.get('/api/v1/secure/visitSchedules', visitSchedule.getAll);
