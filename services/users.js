@@ -20,6 +20,7 @@ service.deleteById = deleteById;
 service.getAllUsers = getAllUsers;
 service.getByEmail = getByEmail;
 service.getWithQuery = getWithQuery;
+service.getCount = getCount;
 
 module.exports = service;
 
@@ -38,6 +39,52 @@ function getAll(){
 
     return deferred.promise;
 } // getAll method ends
+
+function getAll(page,perPage,sort,query,fields){
+
+    // console.log("--------- in getAll of service  page,perPage,sort,query,fields = ", page,perPage,sort,query,fields)
+    var deferred = Q.defer();
+    var header = [];
+    header.push({
+        'start' : page,
+        'size' : perPage,
+        'filter' : query,
+        'sort' : sort,
+        'fields' : fields
+    })
+    model
+    .find(query)
+    .limit(perPage)
+    .skip(perPage*page)
+    .sort(sort)
+    .select(fields)
+    .exec(function(err, list){
+        if(err) {
+            console.log(err);
+            deferred.reject(err);
+        }
+        else
+            deferred.resolve(list);
+    });
+
+    return deferred.promise;
+}
+
+
+function getCount(){
+    var deferred = Q.defer();
+    model.count({}, function(err, count){
+        if(err) {
+            console.log(err);
+            deferred.reject(err);
+        }
+        else{
+            deferred.resolve({totalCount:count});
+        }
+        
+    });
+    return deferred.promise;
+}
 
 function getOneById(id){
     var deferred = Q.defer();

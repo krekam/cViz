@@ -1,0 +1,47 @@
+.showingPaginationLabel {
+    color: #30373B;
+    font-weight: bold;
+
+}
+.pagination {
+    margin: 0px !important;
+    font-weight: 600 !important;
+}
+
+.pagination>li>a, .pagination>li>span {
+    border: none !important;
+    color: #30373B;
+}
+
+.pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover {
+    color: #30373B;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    text-decoration: underline;
+}
+
+.pagination>li>a:focus, .pagination>li>a:hover, .pagination>li>span:focus, .pagination>li>span:hover {
+    color: #F0592B;
+    background-color: transparent;
+    border-color: transparent;
+    cursor: pointer;
+}
+
+.pagination>li>a, .pagination>li>span {
+    padding: 0px 2px 0px 10px !important;
+}
+
+.pagination-row {
+    padding-bottom: 15px;
+}
+
+.anchor-btn {
+    color: #00ACE4;
+    cursor: pointer;
+}
+
+.anchor-btn:hover {
+    text-decoration: none !important;
+    color: #00ACE4;
+}

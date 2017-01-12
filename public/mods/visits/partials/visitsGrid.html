@@ -62,6 +62,7 @@
       </thead>
       <tbody class="data-grid-data">
         <tr ng-repeat="visit in visitBatch.visits | filter: search |orderBy:orderByField:reverseSort">
+        <!-- <tr ng-repeat="visit in allVisits1 | filter: search |orderBy:orderByField:reverseSort"> -->
           <!-- <td>{{visit.startDate | DateFormat:"ddd, DD MMM"}} - {{visit.endDate | DateFormat:"ddd, DD MMM"}}</td> -->
           <td>{{visit.startDate | date:'dd MMM yyyy'}} - {{visit.endDate | date:'dd MMM yyyy'}}</td>
           <!--td>{{visit.title}}</td-->
@@ -117,6 +118,49 @@
         </tr> -->
       </tbody>
     </table>
+
+<div class="row" style="margin-top: 0px;" ng-show="vmPager.pages.length>1 && visitBatch.visits.length>1">
+<!-- <div class="row" style="margin-top: 0px;" ng-show="vmPager.pages.length>1"> -->
+  <div class="col-md-6">
+    <p class="showingPaginationLabel" ng-show="userSize<tasksCount">Showing Tasks {{startPage + 1}} to {{userSize}} of {{tasksCount}}
+    </p>
+    <p class="showingPaginationLabel" ng-show="userSize>=tasksCount && tasksCount!=0">Showing Tasks {{startPage + 1}} to {{tasksCount}} of {{tasksCount}}
+    </p>                   
+  </div>
+  <div class="col-md-6">
+    <span class="pull-right">                       
+      <ul ng-if="vmPager.pages.length" class="pagination">
+        <li ng-show="vmPager.currentPage == 1" ng-class="{disabled:vmPager.currentPage === 1}">
+          <a>&lt;&lt; First</a>
+        </li>
+        <li ng-show="vmPager.currentPage > 1" ng-class="{disabled:vmPager.currentPage === 1}">
+          <a ng-click="listOfVisitsCount(1)">&lt;&lt; First</a>
+        </li>
+        <li ng-show="vmPager.currentPage == 1" ng-class="{disabled:vmPager.currentPage == 1}">
+          <a>&lt; Previous</a>
+        </li>
+        <li ng-show="vmPager.currentPage > 1" ng-class="{enabled:vmPager.currentPage > 1}">
+          <a ng-click="listOfVisitsCount(vmPager.currentPage - 1)">&lt; Previous</a>
+        </li>
+        <li ng-repeat="page in vmPager.pages" ng-class="{active:vmPager.currentPage === page}">
+          <a ng-click="listOfVisitsCount(page)">{{page}}</a>
+        </li>
+        <li ng-show="vmPager.currentPage < vmPager.totalPages" ng-class="{enabled:vmPager.currentPage > vmPager.totalPages}">
+          <a ng-click="listOfVisitsCount(vmPager.currentPage + 1)">Next &gt;</a>
+        </li>
+        <li ng-show="vmPager.currentPage == vmPager.totalPages" ng-class="{disabled:vmPager.currentPage == vmPager.totalPages}">
+          <a>Next &gt;</a>
+        </li>
+        <li ng-show="vmPager.currentPage < vmPager.totalPages" ng-class="{disabled:vmPager.currentPage === vmPager.totalPages}">
+          <a ng-click="listOfVisitsCount(vmPager.totalPages)">Last &gt;&gt;</a>
+        </li>
+        <li ng-show="vmPager.currentPage == vmPager.totalPages" ng-class="{disabled:vmPager.currentPage === vmPager.totalPages}">
+          <a>Last &gt;&gt;</a>
+        </li>
+      </ul>
+    </span>
+  </div>
+</div>     
 
     <table ng-show="isSaving && VisitVmag " class="table table-striped table-condensed table-responsive table-hover">
       <thead class="data-grid-header">

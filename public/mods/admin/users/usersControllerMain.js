@@ -1,8 +1,8 @@
 'use strict';
 var usersApp = angular.module('users');
 
-usersApp.controller('usersControllerMain', ['$scope', '$http', '$routeParams','$rootScope','$mdDialog','$location', 'growl', '$mdMedia','Upload',
-  function($scope, $http, $routeParams,$rootScope,$mdDialog,$location,growl,$mdMedia,Upload) {
+usersApp.controller('usersControllerMain', ['PagerService','$scope', '$http', '$routeParams','$rootScope','$mdDialog','$location', 'growl', '$mdMedia','Upload',
+  function(PagerService, $scope, $http, $routeParams,$rootScope,$mdDialog,$location,growl,$mdMedia,Upload) {
 
     $scope.hideFilter = true;
     $scope.hideAddRow = true;
@@ -12,8 +12,11 @@ usersApp.controller('usersControllerMain', ['$scope', '$http', '$routeParams','$
     $scope.mode=(id==null? 'add': 'edit');
 
     //fetching all the user details by calling refresh function
-    var refresh = function() {
-      $http.get('/api/v1/secure/admin/users').success(function(response) {
+    var refresh = function(start) {
+
+      var userListTempUrl = '/api/v1/secure/admin/users';
+    userListTempUrl += "?start=" + start + '&size='+10;
+      $http.get(userListTempUrl).success(function(response) {
         $scope.userlist = response;
         $scope.user = "";
       });
@@ -46,8 +49,63 @@ usersApp.controller('usersControllerMain', ['$scope', '$http', '$routeParams','$
       } // switch scope.mode ends
     };
 
-    refresh();
+    refresh(0);
     
+  $scope.listOfUsersCount = function(page) 
+  {
+    var url = '/api/v1/secure/admin/users/xyz/abc/pqr/usersCount';
+
+    // console.log("------- inside $scope.listOfTasksCount ----------------- ")
+    $http.get(url).success(function(data) {
+      $scope.tasksCount = data.totalCount;
+      if (data != null) {
+        $scope.dummyItems = _.range(0, $scope.tasksCount); // dummy array of items to be paged
+        $scope.pager = {};
+        $scope.setPage = setPage;
+
+        if (page == undefined) {
+          initController();
+
+          function initController() {
+            // initialize to page 1
+            $scope.setPage(1);
+          }
+        }
+
+        if (page != undefined) {
+          $scope.setPage(page);
+        }
+
+        function setPage(page) {
+          if (page < 1 || page > $scope.pager.totalPages) {
+            return;
+          }
+
+          // console.log("  ------ $scope.dummyItems.length, page,info.UI.pagination.size : " , $scope.dummyItems.length, page)
+          // get pager object from service
+          // $scope.pager = PagerService.GetPager($scope.dummyItems.length, page,info.UI.pagination.size);
+          $scope.pager = PagerService.GetPager($scope.dummyItems.length, page, 10);
+          $scope.vmPager = $scope.pager;
+
+
+          // console.log("---------------$scope.vmPager = ", $scope.vmPager)
+
+          $scope.start = ($scope.pager.currentPage - 1);
+          // $scope.startPage = $scope.start * info.UI.pagination.size;
+          $scope.startPage = $scope.start * 10;
+          // $scope.userSize = $scope.startPage + info.UI.pagination.size;
+          $scope.userSize = $scope.startPage + 10;
+          // get current page of items
+          $scope.items = $scope.dummyItems.slice($scope.pager.startIndex, $scope.pager.endIndex + 1);
+          $scope.$scopeItems = $scope.items;
+          refresh($scope.start);
+        }
+      }
+    });
+  }
+
+$scope.listOfUsersCount();
+
     //method for adding new record dynamically
     $scope.addRecord = function(){
       $scope.hideAddRow = false;
