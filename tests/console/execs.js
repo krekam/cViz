@@ -13,8 +13,8 @@ var userService           = require(constants.paths.services +  '/users');
 // 	title						    : "Critical Test Visit",
 // 	client 						  : "A03234567892345678900001",
 // 	agenda							: "Customer would like to understand how far we are serious on critical process improvement",
-// 	agm								: "A02234567892345678900001",   //sgoud@csc.com
-// 	anchor							: "A02234567892345678900002", // spediripatti@csc.com
+// 	agm								: "A02234567892345678900001",   
+// 	anchor							: "A02234567892345678900002", 
 // 	schedule						: [
 // 		{
 // 			startDate					: new Date("20 Mar 2016"),//, default: Date.now },
@@ -34,15 +34,15 @@ var userService           = require(constants.paths.services +  '/users');
 // 	],
 // 	visitors						: [
 // 		{
-// 			visitor						: "A02234567892345678900012",  // dtorreto@zurich.com
+// 			visitor						: "A02234567892345678900012", 
 // 			influence					: "influencer",		// {Decision Maker, Influencer, End User, Others}
 // 		},
 // 		{
-// 			visitor						: "A02234567892345678900013",  // sandresson@zurich.com
+// 			visitor						: "A02234567892345678900013", 
 // 			influence					: "influencer",		// {Decision Maker, Influencer, End User, Others}
 // 		},
 // 		{
-// 			visitor						: "A02234567892345678900014",  // apenny@telenor.com
+// 			visitor						: "A02234567892345678900014",  
 // 			influence					: "decision maker",		// {Decision Maker, Influencer, End User, Others}
 // 		}
 // 	],
@@ -90,7 +90,7 @@ visitService.getExecsById('a01234567892345678900006')
 				// .catch(function (err){
 				// 		console.log("exception" + err);
 				// });
-			//}
+			}
 })
 
 // logger.writeLine();
